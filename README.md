@@ -88,7 +88,7 @@ uv run python ml/predict.py
 
 ---
 
-## 🤖 Modèle Machine Learning
+## Modèle Machine Learning
 
 | Paramètre    | Valeur                                      |
 |-------------|---------------------------------------------|
@@ -96,13 +96,13 @@ uv run python ml/predict.py
 | Features    | xg_home, xg_away, xg_diff, équipes encodées |
 | Cible       | H (domicile) / D (nul) / A (extérieur)      |
 | Split       | 80% entraînement / 20% test                 |
-| Précision   | ~58–65%                                     |
+| Précision   | ~58 - 65%                                     |
 
 ---
 
 ## 📊 Source des données
 
-**[Understat.com](https://understat.com)** — Saison Premier League 2023-2024
+**[Understat.com](https://understat.com)** : Saison Premier League 2023-2024
 
 Scraping via **Playwright** : le navigateur charge la page, extrait le JSON embarqué
 dans les balises `<script>` contenant tous les matchs avec leurs xG.
@@ -129,4 +129,4 @@ puis affiche la prédiction avec les probabilités pour chaque issue.
 
 ## 👤 Auteur
 
-Projet universitaire — Université d'Angers — Cours : Algorithmie et Programmation
+Rétis ZANNOU : Algorithmie & Programmation
