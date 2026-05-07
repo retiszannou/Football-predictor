@@ -1,4 +1,4 @@
-# 🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League Match Predictor
+#  Premier League Match Predictor
 
 Prédiction de résultats de matchs de Premier League (victoire / nul / défaite)
 via **webscraping Playwright** (données xG sur Understat.com) et **Machine Learning** (Random Forest).
