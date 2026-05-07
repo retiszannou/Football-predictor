@@ -4,7 +4,7 @@ Prédiction de résultats de matchs de Premier League (victoire / nul / défaite
 via **webscraping Playwright** (données xG sur Understat.com) et **Machine Learning** (Random Forest).
 Une **application web Flask** permet de faire des prédictions interactives.
 
-> Projet réalisé dans le cadre du cours **Algorithmie et Programmation** — Université d'Angers
+> Projet réalisé dans le cadre du cours **Algorithmie et Programmation** - Université d'Angers
 
 ---
 
