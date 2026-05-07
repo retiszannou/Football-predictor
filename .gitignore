@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.uv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Données brutes (trop lourdes pour Git)
+# Décommentez la ligne suivante si vous ne voulez pas versionner les CSV
+# data/*.csv
+
+# Plots générés
+data/*.png
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premier League Predictor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    header p {
+      color: #8b949e;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8b949e;
+      margin-bottom: 0.5rem;
+    }
+
+    .field select, .field input[type="number"] {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field select:focus, .field input:focus {
+      border-color: #58a6ff;
+    }
+
+    .xg-hint {
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-top: 0.3rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background: #238636;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #2ea043; }
+    button:disabled { background: #3d4450; cursor: not-allowed; }
+
+    /* Résultat */
+    #result {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .vs-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .team-home { color: #58a6ff; }
+    .team-away { color: #f78166; }
+    .vs { color: #8b949e; font-size: 0.9rem; }
+
+    .prediction-badge {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+    .badge-H { background: #0c2d6b; border: 1px solid #58a6ff; color: #58a6ff; }
+    .badge-D { background: #2d2208; border: 1px solid #d29922; color: #d29922; }
+    .badge-A { background: #3d0c0c; border: 1px solid #f78166; color: #f78166; }
+
+    .proba-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .proba-row { display: flex; align-items: center; gap: 0.8rem; }
+    .proba-label { font-size: 0.82rem; color: #8b949e; min-width: 150px; }
+    .proba-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #21262d;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .proba-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .fill-H { background: #58a6ff; }
+    .fill-D { background: #d29922; }
+    .fill-A { background: #f78166; }
+    .proba-pct { font-size: 0.82rem; font-weight: 600; min-width: 40px; text-align: right; }
+
+    .error-msg {
+      color: #f78166;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      color: #8b949e;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League Predictor</h1>
+  <p>Prédiction par Machine Learning · Données xG via Understat</p>
+</header>
+
+<div class="card">
+  <div class="field-row">
+    <div class="field">
+      <label>Équipe domicile</label>
+      <select id="home">
+        {% for team in teams %}
+        <option value="{{ team }}" {% if team == "Manchester City" %}selected{% endif %}>{{ team }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Équipe extérieur</label>
+      <select id="away">
+        {% for team in teams %}
+        <option value="{{ team }}" {% if team == "Arsenal" %}selected{% endif %}>{{ team }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>xG domicile estimé</label>
+      <input type="number" id="xg_home" value="1.8" min="0" max="5" step="0.1" />
+      <div class="xg-hint">Ex : 1.8 = bonne équipe à domicile</div>
+    </div>
+    <div class="field">
+      <label>xG extérieur estimé</label>
+      <input type="number" id="xg_away" value="1.2" min="0" max="5" step="0.1" />
+      <div class="xg-hint">Ex : 1.2 = équipe moyenne</div>
+    </div>
+  </div>
+
+  <button id="btn" onclick="predict()">Prédire le résultat</button>
+
+  <div id="result">
+    <div class="vs-bar">
+      <span class="team-home" id="r-home"></span>
+      <span class="vs">vs</span>
+      <span class="team-away" id="r-away"></span>
+    </div>
+    <div class="prediction-badge" id="badge"></div>
+    <div class="proba-list">
+      <div class="proba-row">
+        <span class="proba-label" id="label-H">Victoire domicile</span>
+        <div class="proba-bar-bg"><div class="proba-bar-fill fill-H" id="bar-H" style="width:0%"></div></div>
+        <span class="proba-pct" id="pct-H">0%</span>
+      </div>
+      <div class="proba-row">
+        <span class="proba-label">Match nul</span>
+        <div class="proba-bar-bg"><div class="proba-bar-fill fill-D" id="bar-D" style="width:0%"></div></div>
+        <span class="proba-pct" id="pct-D">0%</span>
+      </div>
+      <div class="proba-row">
+        <span class="proba-label" id="label-A">Victoire extérieur</span>
+        <div class="proba-bar-bg"><div class="proba-bar-fill fill-A" id="bar-A" style="width:0%"></div></div>
+        <span class="proba-pct" id="pct-A">0%</span>
+      </div>
+    </div>
+  </div>
+  <div class="error-msg" id="error"></div>
+</div>
+
+<footer>
+  Projet universitaire · Université d'Angers · Algorithmie & Programmation
+</footer>
+
+<script>
+async function predict() {
+  const home    = document.getElementById("home").value;
+  const away    = document.getElementById("away").value;
+  const xg_home = parseFloat(document.getElementById("xg_home").value);
+  const xg_away = parseFloat(document.getElementById("xg_away").value);
+
+  document.getElementById("error").textContent = "";
+  document.getElementById("result").style.display = "none";
+  document.getElementById("btn").disabled = true;
+  document.getElementById("btn").textContent = "Analyse en cours...";
+
+  try {
+    const res  = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ home, away, xg_home, xg_away })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      document.getElementById("error").textContent = data.error;
+      return;
+    }
+
+    // Remplir le résultat
+    document.getElementById("r-home").textContent = data.home;
+    document.getElementById("r-away").textContent = data.away;
+    document.getElementById("label-H").textContent = `Victoire ${data.home}`;
+    document.getElementById("label-A").textContent = `Victoire ${data.away}`;
+
+    const badge = document.getElementById("badge");
+    badge.textContent = data.label;
+    badge.className = `prediction-badge badge-${data.prediction}`;
+
+    ["H", "D", "A"].forEach(k => {
+      const p = data.probabilities[k];
+      document.getElementById(`bar-${k}`).style.width = p + "%";
+      document.getElementById(`pct-${k}`).textContent  = p + "%";
+    });
+
+    document.getElementById("result").style.display = "block";
+
+  } catch (e) {
+    document.getElementById("error").textContent = "Erreur de connexion au serveur.";
+  } finally {
+    document.getElementById("btn").disabled = false;
+    document.getElementById("btn").textContent = "Prédire le résultat";
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+[project]
+name = "football-predictor"
+version = "0.1.0"
+description = "Prédiction de résultats de matchs de Premier League via webscraping + ML"
+requires-python = ">=3.11"
+
+dependencies = [
+    "playwright>=1.44",
+    "pandas>=2.2",
+    "scikit-learn>=1.5",
+    "matplotlib>=3.9",
+    "seaborn>=0.13",
+    "requests>=2.32",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+    "jupyter>=1.0",
+    "flask>=3.0",
+]
