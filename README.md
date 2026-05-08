@@ -42,8 +42,8 @@ football-predictor/
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/<votre-pseudo>/football-predictor.git
-cd football-predictor
+git clone https://github.com/retiszannou/Football-predictor.git
+cd Football-predictor
 ```
 
 ### 2. Installer les dépendances
