@@ -17,17 +17,43 @@ import os
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+import datetime
+import requests
+from bs4 import BeautifulSoup
+from scraper.scrape_wikipedia import scrape_premier_league_teams
 
-# Équipes Premier League 2023-2024
-PREMIER_LEAGUE_TEAMS = [
-    "Arsenal", "Aston Villa", "Bournemouth", "Brentford",
-    "Brighton", "Burnley", "Chelsea", "Crystal Palace",
-    "Everton", "Fulham", "Liverpool", "Luton Town",
-    "Manchester City", "Manchester United", "Newcastle United",
-    "Nottingham Forest", "Sheffield United", "Tottenham",
-    "West Ham", "Wolverhampton",
-]
 
+# Chargement dynamique des équipes depuis Wikipédia (Saison automatique au 01/07)
+print("[INFO] Mise à jour de la liste des clubs...")
+WIKI_TEAMS = scrape_premier_league_teams()
+
+if WIKI_TEAMS and len(WIKI_TEAMS) == 20:
+    PREMIER_LEAGUE_TEAMS = WIKI_TEAMS
+    print(f"[OK] 20 équipes synchronisées pour la saison en cours.")
+else:
+    # Liste de secours (Fallback) si pas d'internet pour éviter que le script plante
+    PREMIER_LEAGUE_TEAMS = [
+        "Arsenal",
+        "Aston Villa",
+        "Bournemouth",
+        "Brentford",
+        "Brighton",
+        "Chelsea",
+        "Crystal Palace",
+        "Everton",
+        "Fulham",
+        "Liverpool",
+        "Manchester City",
+        "Manchester United",
+        "Newcastle United",
+        "Nottingham Forest",
+        "Tottenham",
+        "West Ham",
+        "Wolverhampton",
+    ]
+    print(
+        "[WARN] Utilisation de la liste de secours (Vérifiez votre connexion ou l'URL)."
+    )
 DATA_PATH = "data/matches.csv"
 
 
